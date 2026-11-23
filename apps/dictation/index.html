@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123d49">
+<meta name="description" content="语文词语与成语听写，支持语音口令、屏幕常亮、自定义文本和中文朗读。">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<title>语文听写 · 语音控制</title>
+<style>
+:root {font-family:ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:#173443; background:#f0f6f3; --ink:#173443; --muted:#6d7f83; --deep:#123d49; --mint:#108779; --mint-dark:#076f64; --line:#dce9e3; --paper:#fff; --warn:#fff6d8}
+* {box-sizing:border-box} html {scroll-behavior:smooth} body {margin:0;background:radial-gradient(circle at top right,#c9e9de,transparent 34%),#f0f6f3;min-height:100vh} button,input,textarea,select{font:inherit} button{cursor:pointer;touch-action:manipulation} button:disabled{opacity:.4;cursor:default}
+.topbar{position:sticky;top:0;z-index:9;background:#123d49;color:white;box-shadow:0 6px 22px #14394725;padding:12px 15px 13px}
+.top-inner{max-width:780px;margin:auto}.toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}.kicker{font-size:12px;letter-spacing:.075em;color:#afe5d5;font-weight:750}.count-number{font-size:31px;font-weight:900;line-height:1.25;font-variant-numeric:tabular-nums}.topright{text-align:right;line-height:1.7;font-size:13px;color:#e1f4f0}.bar{height:9px;border-radius:99px;background:#365c67;overflow:hidden;margin-top:8px}.fill{height:100%;background:linear-gradient(90deg,#50d3bd,#b6efd1);width:0%;transition:width .25s}.topnote{font-size:12px;color:#b5d3d3;margin-top:5px}
+header{max-width:780px;margin:0 auto;padding:25px 16px 18px}.eyebrow{font-size:12px;letter-spacing:.15em;font-weight:750;color:#258b7c}h1{font-size:clamp(25px,5vw,34px);margin:8px 0 6px;letter-spacing:.02em}.sub{color:var(--muted);margin:0;line-height:1.7;font-size:13px}
+main{max-width:780px;padding:0 14px 60px;margin:auto}.card{background:var(--paper);border:1px solid #dfebe7;border-radius:22px;box-shadow:0 10px 28px #174d4410;padding:21px;margin-bottom:15px}
+.line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.chip{display:inline-block;background:#e1f6ef;border-radius:99px;color:#006e62;font-size:12px;padding:6px 11px;font-weight:800}.number{font-size:13px;color:var(--muted)}.bigword{font-size:clamp(30px,7vw,47px);font-weight:850;letter-spacing:.08em;line-height:1.5;margin:26px 0 8px;text-align:center;word-break:break-word}.meaning{line-height:1.85;font-size:18px;font-weight:600;margin:19px auto 14px;max-width:600px}.question-label{text-align:center;font-size:13px;font-weight:700;color:#479184;margin-top:22px}.answer{margin:8px auto 0;text-align:center;color:#35555f;font-size:15px}.blank{color:#a6b6b4;letter-spacing:.32em}.status{margin:20px 0 0;padding:13px 14px;text-align:center;background:#edf7f4;color:#186f65;font-weight:700;border-radius:13px;font-size:14px;line-height:1.65;min-height:50px}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:15px}.btn{border:1px solid var(--line);border-radius:14px;padding:14px 8px;background:white;font-size:16px;font-weight:800;color:var(--deep);min-height:52px}.btn.primary{background:var(--mint);color:white;border-color:var(--mint)}.btn.dark{background:var(--deep);color:white;border-color:var(--deep)}.btn.light{background:#e9f6f1}.btn:active{transform:scale(.985)}.secondary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.small{border:0;background:#f4f8f5;border-radius:10px;color:#47676d;padding:11px 3px;font-size:13px;font-weight:750}
+.micline{display:flex;justify-content:space-between;gap:9px;align-items:center;flex-wrap:wrap;margin-top:17px;padding:12px;border-radius:14px;background:#f6f8f7;border:1px solid #edf2ef}.micstatus{font-size:13px;color:#49666d;line-height:1.65;flex:1;min-width:150px}.dot{display:inline-block;height:10px;width:10px;border-radius:50%;background:#a7b5b7;margin-right:5px}.dot.on{background:#16a47d;box-shadow:0 0 0 4px #16a47d24}.dot.wait{background:#dcb24a}.dot.off{background:#a7b5b7}.mic-btn{padding:10px 13px;background:#fff;border:1px solid #cfe1da;color:#075e5b;border-radius:11px;font-weight:800;white-space:nowrap}
+.caption{font-size:12px;color:#6f8484;line-height:1.75;margin:12px 0 0}.warning{font-size:13px;line-height:1.65;background:#fff7de;border:1px solid #f1dea5;color:#805e16;border-radius:12px;padding:11px;margin-top:12px;display:none}h2{font-size:18px;margin:0 0 7px}.intro{color:var(--muted);font-size:13px;line-height:1.7;margin:0 0 17px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mode button{padding:13px 7px;border:1px solid #cde3db;border-radius:13px;background:#f5faf7;color:#55716e;font-weight:750}.mode button.active{border-color:#168e7d;background:#dcf4eb;color:#08695e;box-shadow:inset 0 0 0 1px #168e7d}
+.setting{margin:20px 0}.label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:750;margin-bottom:8px}.val{padding:4px 10px;background:#e5f4ed;border-radius:9px;color:#006f65;font-weight:850}input[type=range]{width:100%;accent-color:#118b7d;height:30px}.setting-help{font-size:12px;color:#899897;line-height:1.7;margin-top:3px}select{border:1px solid #d3e4dc;border-radius:10px;padding:9px 11px;background:white;color:var(--ink)}.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:15px}.switch label{font-size:14px;font-weight:750}.switch input{width:20px;height:20px;accent-color:#118b7d}
+textarea{width:100%;min-height:278px;border:1px solid #cbded9;border-radius:14px;resize:vertical;padding:14px;color:#2a4950;line-height:1.65;font-size:15px;background:#fcfefd}.editor-help{margin:0 0 10px;font-size:13px;line-height:1.8;color:#6a7f7b}.editor-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mini{border:1px solid #d8e7e0;background:#f4faf6;color:#236d65;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:750}.file-button{display:inline-flex;align-items:center;cursor:pointer}
+.words{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.wordbtn{min-width:0;border:1px solid #e1ebe6;background:#f5f9f7;padding:11px 4px;border-radius:11px;color:#38585d;font-size:13px;font-weight:700;overflow-wrap:anywhere}.wordbtn.active{color:#fff;background:var(--mint);border-color:var(--mint)}.wordbtn.done{background:#e2f4eb;border-color:#c9e9dc}.group-title{color:#687f7d;font-size:13px;font-weight:800;margin-top:17px}.mini-note{font-size:12px;color:#80918e;margin-top:11px;line-height:1.7}.footer{text-align:center;font-size:12px;color:#889995;line-height:1.8;padding-top:10px}details summary{font-weight:800;cursor:pointer}.hide-answers{display:flex;align-items:center;gap:7px;justify-content:flex-end;font-size:13px;color:#6d8082}.hide-answers input{accent-color:var(--mint)}
+@media(max-width:460px){.card{padding:18px 15px}.words{grid-template-columns:repeat(3,minmax(0,1fr))}.btn{font-size:15px}.meaning{font-size:16px}.topbar{padding:11px 13px}.count-number{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="top-inner">
+  <div class="toprow"><div><div class="kicker" id="progressLabel">当前进度</div><div class="count-number" id="progressNumber">0 / 31</div></div><div class="topright"><div id="phaseLabel">等待开始</div><div id="repeatLabel">每题 3 次 · 间隔 4 秒</div></div></div>
+  <div class="bar" role="progressbar" aria-label="听写进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="mainProgress"><div id="progressFill" class="fill"></div></div>
+  <div class="topnote" id="topNote">语音模式：朗读完后等待你说“下一个”。</div>
+</div></div>
+<header><div class="eyebrow">CHINESE DICTATION · 11.23</div><h1>🎙️ 语文听写播报器</h1><p class="sub">语音控制 · 中文朗读 · 防息屏 · 可编辑听写内容</p></header>
+<main>
+ <section class="card" id="playPanel">
+  <div class="line"><span class="chip" id="typeChip">普通词语</span><div class="number" id="itemNumber">第 1 / 31 题</div></div>
+  <div id="currentBody"><div class="question-label">当前听写词语</div><div class="bigword">朦胧</div></div>
+  <div class="hide-answers"><label><input type="checkbox" id="hideAnswer"> 隐藏当前答案</label></div>
+  <div class="status" id="playStatus" aria-live="polite">点击“开始听写”</div>
+  <div class="actions">
+   <button id="startBtn" class="btn primary">▶ 开始听写</button>
+   <button id="pauseBtn" class="btn dark" disabled>⏸ 暂停</button>
+   <button id="prevBtn" class="btn">◀ 上一个</button>
+   <button id="nextBtn" class="btn light">下一个 ▶</button>
+  </div>
+  <div class="secondary">
+   <button class="small" id="repeatBtn">🔁 再读一遍</button><button class="small" id="replayBtn">↻ 重读本题</button><button class="small" id="stopBtn">■ 结束听写</button>
+  </div>
+  <div class="micline"><div id="micState" class="micstatus"><span class="dot off"></span>麦克风未开启</div><button id="micBtn" class="mic-btn">🎤 开启麦克风</button></div>
+  <p class="caption">语音口令：“下一个”“上一个”“再读一遍”“重读本题”“暂停”“继续”。朗读时暂时关闭识别，避免误听到播报声。</p>
+  <div class="warning" id="warning" role="alert"></div>
+ </section>
+ <section class="card"><h2>⚙️ 播报设置</h2><p class="intro">建议使用语音模式：每题播报完毕后，无论写多久，都等你说“下一个”。</p>
+  <div class="mode"><button id="voiceMode" class="active">🎤 语音控制</button><button id="autoMode">⏱ 定时自动</button></div>
+  <div class="setting"><div class="label"><span>每题朗读次数</span><span class="val" id="repeatValue">3 次</span></div><input id="repeatRange" type="range" min="1" max="6" value="3"><div class="setting-help">“再读一遍”只额外朗读一次；“重读本题”按所设次数重新播报。</div></div>
+  <div class="setting"><div class="label"><span>朗读之间的间隔</span><span class="val" id="gapValue">4 秒</span></div><input id="gapRange" type="range" min="1" max="20" value="4"><div class="setting-help" id="gapHelp">仅用于同一题的多次朗读；朗读完成后等待口令，不自动跳题。</div></div>
+  <div class="setting"><div class="label"><span>朗读语速</span><select id="rateSelect"><option value="0.7">很慢</option><option value="0.82" selected>稍慢</option><option value="1">正常</option><option value="1.15">稍快</option></select></div></div>
+  <div class="switch"><label for="wakeCheck">📱 听写期间保持屏幕常亮</label><input id="wakeCheck" type="checkbox" checked></div><div class="mini-note" id="wakeStatus">防息屏功能会在开始听写时尝试开启，需要 HTTPS 和浏览器支持。</div>
+ </section>
+ <section class="card"><h2>✏️ 编辑听写内容</h2><p class="editor-help">一行一题。普通词语直接写；根据意思写成语采用 <strong>答案|解释</strong>（英文竖线）。修改完成后点“载入题目”。内容自动保存在本机浏览器。</p>
+  <textarea id="dictationInput" spellcheck="false" aria-label="听写内容输入框"></textarea>
+  <div class="editor-actions"><button class="mini" id="loadBtn">✅ 载入题目</button><button class="mini" id="resetBtn">↩ 恢复今天的31题</button><button class="mini" id="saveTxtBtn">↓ 导出 TXT</button><label class="mini file-button">↑ 导入 TXT <input id="loadFile" type="file" accept=".txt,text/plain" hidden></label></div>
+  <div class="mini-note" id="parseNote">已载入 31 道题。</div>
+ </section>
+ <section class="card"><div class="line"><h2>📋 全部词语</h2><span id="itemCount" class="number">共 31 题</span></div><p class="intro">下方显示全部答案，点击任意词语可跳转到该题。</p><div id="wordList"></div></section>
+ <div class="footer">纯前端工具 · 内容保存在本机 · 语音识别是否联网由浏览器决定。<br>推荐 Android Chrome 或 Edge，通过 HTTPS 打开效果更稳定。</div>
+</main>
+<script>
+(()=>{'use strict';
+const TODAY=`朦胧
+茧子
+枇杷
+节省
+客栈
+旅店
+教训
+挣钱
+冤枉
+糖果
+偏僻
+抽象
+扎紧
+陪嫁
+毕业
+缴费
+品尝
+无锡
+意识
+领略
+嘲笑
+鲁迅
+精致
+蚕宝宝
+乌篷船
+恍恍惚惚|形容人的神志不清、迷迷糊糊，精神不太集中，好像做梦一样。
+密密层层|形容东西非常多，排列得又密又多，一层挨着一层。
+恋恋不舍|形容非常留恋，舍不得离开或放下。
+满天星斗|形容夜晚的天空中布满了星星，到处都是闪亮的星星。
+猪狗不如|形容一个人的品行极其恶劣，连猪狗都比不上。
+缺斤少两|指卖东西时，实际给的重量不足规定或约定的重量，欺骗顾客。`;
+const $=id=>document.getElementById(id);
+const key='voice-dictation-2026-v1';
+let settings={};try{settings=JSON.parse(localStorage.getItem(key+'-settings'))||{}}catch{}
+let items=[],index=0,started=false,paused=false,mode=settings.mode==='auto'?'auto':'voice',cycles=+settings.cycles||3,gap=+settings.gap||4,rate=+settings.rate||0.82;
+let wantMic=false,rec=null,recActive=false,recStarting=false,recRestart=null,recStoppingForPlayback=false,micBlocked=false;
+let wakeSentinel=null,activeToken=0,pendingSleep=null,voiceSpeaking=false,lastUtterance='',completed=0,timerUntil=0,timerTicker=null,phase='idle',allowSingleSpeech=false;
+let diag='';
+function storage(){try{localStorage.setItem(key+'-settings',JSON.stringify({mode,cycles,gap,rate,wake:$('wakeCheck').checked,hidden:$('hideAnswer').checked}))}catch{}}
+function setNotice(text){$('warning').style.display=text?'block':'none';$('warning').textContent=text||'';}
+function note(text){$('playStatus').textContent=text;}
+function parseText(text){let arr=[],bad=0; for(let raw of text.split(/\r?\n/)){raw=raw.trim(); if(!raw||raw.startsWith('#'))continue;let split=raw.indexOf('|'); let answer=(split<0?raw:raw.slice(0,split)).trim();let clue=split<0?'':raw.slice(split+1).trim();if(!answer||split>=0&&!clue){bad++;continue}arr.push({answer,clue,spoken:clue||answer,isIdiom:!!clue})}return {arr,bad}}
+function saveText(){try{localStorage.setItem(key+'-text',$('dictationInput').value)}catch{}}
+function loadItems(resetPlay=true){const {arr,bad}=parseText($('dictationInput').value); if(!arr.length){setNotice('没有有效题目。请检查文本框：每行一个词，成语用“答案|解释”。');return false}saveText();if(resetPlay)stopSession(false);items=arr;index=0;completed=0;render();$('parseNote').textContent=`成功载入 ${arr.length} 题（普通词语 ${arr.filter(i=>!i.isIdiom).length}，解释题 ${arr.filter(i=>i.isIdiom).length}）${bad?'，忽略格式不正确的 '+bad+' 行':''}。`;setNotice('');return true}
+function showCurrent(){const item=items[index]; if(!item)return;const hidden=$('hideAnswer').checked;$('typeChip').textContent=item.isIdiom?'💡 报意思写成语':'✍️ 普通词语';$('itemNumber').textContent=`第 ${index+1} / ${items.length} 题`;
+let div=$('currentBody');div.replaceChildren();let heading=document.createElement('div');heading.className='question-label';heading.textContent=item.isIdiom?'根据解释写出四字成语':'当前听写词语';div.append(heading);
+let text=document.createElement('div'); text.className=item.isIdiom?'meaning':'bigword';text.textContent=item.isIdiom?item.clue:(hidden?'● ● ● ●':item.answer); if(!item.isIdiom&&hidden)text.classList.add('blank');div.append(text);
+if(item.isIdiom){let ans=document.createElement('div');ans.className='answer';ans.textContent=hidden?'答案已隐藏':'答案：'+item.answer;div.append(ans)} }
+function renderList(){let box=$('wordList');box.replaceChildren();let normal=items.filter(i=>!i.isIdiom).length;let groups=[['普通词语',0,normal],['根据意思写成语',normal,items.length]];
+for(const [name,start,end] of groups){ if(start===end)continue;const group=document.createElement('div');group.className='group-title';group.textContent=name;box.append(group);const grid=document.createElement('div');grid.className='words';for(let i=start;i<end;i++){const b=document.createElement('button');b.className='wordbtn';b.textContent=items[i].answer;b.title=items[i].isIdiom?items[i].clue:items[i].answer;if(i===index)b.classList.add('active');else if(i<completed)b.classList.add('done');b.addEventListener('click',()=>goTo(i));grid.append(b)}box.append(grid)} }
+function renderProgress(){const max=items.length||1;let pct=(mode==='voice'?(completed/max):(Math.max(completed,index)/max))*100;
+$('progressFill').style.width=`${Math.min(100,pct)}%`;$('mainProgress').setAttribute('aria-valuenow',Math.round(pct));$('progressNumber').textContent=`${index+1} / ${max}`;
+$('repeatLabel').textContent=`每题 ${cycles} 次 · 间隔 ${gap} 秒`;
+if(!started){$('phaseLabel').textContent='等待开始';$('topNote').textContent='语音模式：读完等待“下一个”口令。';}
+else if(paused){$('phaseLabel').textContent='已暂停';$('topNote').textContent='点击继续，或用语音说“继续”。';}
+else if(phase==='waiting'){$('phaseLabel').textContent='等待口令';$('topNote').textContent='说“下一个”进入下一题；等待时间不限。';}
+else if(phase==='speaking'){$('phaseLabel').textContent='正在朗读';$('topNote').textContent='朗读期间暂停麦克风识别，防止误触。';}
+else if(phase==='gap'){$('phaseLabel').textContent='朗读间隔';$('topNote').textContent='同一题的多次播报之间暂停。';}
+else if(phase==='done'){$('phaseLabel').textContent='听写结束 🎉';$('topNote').textContent='全部完成，可以重新开始或查看词语。';}
+else{$('phaseLabel').textContent='准备中';$('topNote').textContent='请允许浏览器使用麦克风和中文语音服务。'} }
+function render(){showCurrent();renderList();renderProgress();$('itemCount').textContent=`共 ${items.length} 题`;$('startBtn').textContent=started?(paused?'▶ 继续听写':'▶ 重新开始'):'▶ 开始听写';$('pauseBtn').disabled=!started;$('pauseBtn').textContent=paused?'▶ 继续':'⏸ 暂停';$('voiceMode').classList.toggle('active',mode==='voice');$('autoMode').classList.toggle('active',mode==='auto');$('gapHelp').textContent=mode==='voice'?'仅用于同一题的多次朗读；读完后等待口令，不自动跳题。':'同一题的朗读间隔与切换到下一题前的等待时间均为此秒数。';}
+function clearSleeper(){if(pendingSleep){clearTimeout(pendingSleep.id);clearInterval(pendingSleep.tick);pendingSleep.resolve();pendingSleep=null}};
+function delay(ms,token){return new Promise(resolve=>{if(token!==activeToken)return resolve();let begin=Date.now();let id=setTimeout(()=>{if(pendingSleep?.id===id){clearInterval(pendingSleep.tick);pendingSleep=null}resolve()},ms);let tick=setInterval(()=>{if(token!==activeToken){clearTimeout(id);clearInterval(tick);resolve();return}let remain=Math.max(0,Math.ceil((ms-(Date.now()-begin))/1000));$('topNote').textContent=`朗读间隔：还剩 ${remain} 秒`},250);pendingSleep={id,tick,resolve}})}
+function stopTTS(){voiceSpeaking=false;try{window.speechSynthesis?.cancel()}catch{}}
+function synthSupported(){return typeof window.SpeechSynthesisUtterance!=='undefined' && !!window.speechSynthesis}
+function waitForVoice(text,token){return new Promise(resolve=>{if(token!==activeToken)return resolve();if(!synthSupported()){setNotice('当前浏览器不支持中文语音朗读，请改用 Android Chrome 或 Edge。');return resolve()}let ended=false;const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=rate;u.pitch=1;u.volume=1;
+let voices=window.speechSynthesis.getVoices?.()||[];let selected=voices.find(v=>/zh[-_]CN/i.test(v.lang))||voices.find(v=>/^zh/i.test(v.lang));if(selected)u.voice=selected;
+function done(){if(ended)return;ended=true;clearTimeout(watchdog);voiceSpeaking=false;resolve()}
+const watchdog=setTimeout(done,Math.min(70000,Math.max(12000,text.length*1000)));
+u.onend=done;u.onerror=(e)=>{if(e.error && !['interrupted','canceled'].includes(e.error))setNotice('朗读服务返回：'+e.error+'。可以尝试点击“再读一遍”。');done()};
+voiceSpeaking=true;lastUtterance=text;
+try{window.speechSynthesis.speak(u)}catch(e){setNotice('无法开始朗读：'+e.message);done()}
+})}
+function invalidate(){activeToken++;clearSleeper();stopTTS();stopRecognize();}
+async function runItem(){const token=++activeToken;clearSleeper();stopTTS();stopRecognize();phase='speaking';render();if(!items[index])return;
+for(let i=1;i<=cycles;i++){
+ if(token!==activeToken||!started||paused)return;
+ phase='speaking';note(`🔊 第 ${index+1} 题 · 正在朗读第 ${i} / ${cycles} 次`);renderProgress();await waitForVoice(items[index].spoken,token);
+ if(token!==activeToken||!started||paused)return;
+ if(i<cycles){phase='gap';note(`⏳ 第 ${i} 次朗读结束，间隔 ${gap} 秒后继续`);renderProgress();await delay(gap*1000,token)}
+}
+if(token!==activeToken||!started||paused)return;
+completed=Math.max(completed,index+1);
+if(mode==='voice'){phase='waiting';recStoppingForPlayback=false;note('✅ 本题已读完。写完后说“下一个”，或点击“下一题”。');render();scheduleRecognition(160);}
+else{phase='gap';note(`✅ 本题完成，${gap} 秒后自动进入下一题`);render();await delay(gap*1000,token);if(token===activeToken&&started&&!paused)goTo(index+1,true)}
+}
+function goTo(i,fromAuto=false){if(!items.length)return;if(i>=items.length){finish();return}i=Math.max(0,i);invalidate();index=i;if(!fromAuto)completed=Math.min(completed,index);phase='idle';render();if(started&&!paused)runItem();else note('已跳转。点击开始或继续听写。')}
+function finish(){invalidate();started=false;paused=false;phase='done';completed=items.length;releaseWakeLock();render();note('🎉 全部听写完成！可以检查答案，或者重新开始。')}
+function stopSession(clearStatus=true){invalidate();started=false;paused=false;phase='idle';releaseWakeLock();render();if(clearStatus)note('已结束听写。点击“开始听写”可重新播报。')}
+async function startSession(){if(!items.length&&!loadItems(false))return;
+if(started&&!paused){goTo(0);return}
+if(!started){index=0;completed=0}
+started=true;paused=false;phase='speaking';setNotice('');render();
+if(mode==='voice'&&wantMic&&!supportsRecognize())setNotice('此浏览器不支持语音识别，仍可使用手动“下一题”。');
+requestWakeLock();runItem()}
+function pauseSession(){if(!started)return;if(paused){paused=false;render();note('继续播报当前题（从本题第1次重新开始）。');runItem();return}
+invalidate();paused=true;phase='paused';render();note('⏸ 已暂停。点击“继续”将重新朗读本题；如麦克风已打开，也可说“继续”。');if(wantMic&&mode==='voice'){recStoppingForPlayback=false;scheduleRecognition(250)}}
+async function sayAgain(){if(!items.length)return;const t=activeToken;stopRecognize();if(started&&!paused){invalidate();let own=activeToken;phase='speaking';renderProgress();note('🔁 正在额外朗读一次……');await waitForVoice(items[index].spoken,own);if(own!==activeToken)return;phase='waiting';note('✅ 额外朗读完成。说“下一个”或继续等待。');renderProgress();if(wantMic&&mode==='voice'){recStoppingForPlayback=false;scheduleRecognition(250)}}else{note('🔊 正在额外朗读一次……');let own=++activeToken;await waitForVoice(items[index].spoken,own);if(own!==activeToken)return;note('朗读完成，可以开始听写。');if(wantMic&&mode==='voice'){recStoppingForPlayback=false;scheduleRecognition(250)}}}
+function supportsRecognize(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
+function updateMicUI(){let isOn=wantMic&&(recActive||recStarting);let cls=isOn?'on':wantMic?'wait':'off';let title=isOn?'🎧 正在监听口令':wantMic?(voiceSpeaking?'🔈 朗读时暂停监听':'🎤 等待麦克风就绪'):'麦克风未开启';$('micState').innerHTML=`<span class="dot ${cls}"></span>${title}`;$('micBtn').textContent=wantMic?'关闭麦克风':'🎤 开启麦克风'}
+function getRecognize(){if(rec)return rec;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return null;rec=new SR();rec.lang='zh-CN';rec.continuous=false;rec.interimResults=false;rec.maxAlternatives=1;
+rec.onstart=()=>{recActive=true;recStarting=false;updateMicUI()};
+rec.onresult=e=>{let text='';for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)text+=e.results[i][0]?.transcript||'';if(!text)return;let normalized=text.replace(/[\s，。！!？?、,.]/g,'').trim();if(/下一个|下一個|下一题|下一題|下一道|下道题|下一页|跳过/.test(normalized)){note(`🎤 识别：“${text}” → 下一个`);goTo(index+1);}
+else if(/上一个|上一個|上一题|上一題|前一个|前一题/.test(normalized)){note(`🎤 识别：“${text}” → 上一个`);goTo(index-1)}
+else if(/再读一遍|再念一遍|再说一遍|重复一次|再读一次/.test(normalized)){note(`🎤 识别：“${text}” → 再读一遍`);sayAgain()}
+else if(/重读本题|重新读这题|重读这一题|重来一遍/.test(normalized)){note(`🎤 识别：“${text}” → 重读本题`);if(started&&!paused)runItem();else sayAgain()}
+else if(/暂停|停一下|先停一下/.test(normalized)){note(`🎤 识别：“${text}” → 暂停`);pauseSession()}
+else if(/继续|接着读|开始读/.test(normalized)){note(`🎤 识别：“${text}” → 继续`);if(paused)pauseSession();else if(!started)startSession()}
+else {diag=`听到“${text}”，未匹配口令`;if(!voiceSpeaking)note(`🎧 ${diag}，请说“下一个”。`)}}
+rec.onerror=e=>{recActive=false;recStarting=false;updateMicUI();if(['not-allowed','service-not-allowed','audio-capture'].includes(e.error)){wantMic=false;micBlocked=true;updateMicUI();setNotice('麦克风权限被拒绝或设备无法录音（'+e.error+'）。请在浏览器网站设置中允许麦克风，并通过 HTTPS 打开页面。');return}if(e.error==='network'){setNotice('语音识别服务连接失败。部分浏览器的语音识别需要网络；手动“下一题”仍可用。')}else if(e.error!=='no-speech'&&e.error!=='aborted')setNotice('语音识别暂时不可用：'+e.error+'。可以点击麦克风按钮重试。')};
+rec.onend=()=>{recActive=false;recStarting=false;updateMicUI();if(shouldListen())scheduleRecognition(500)};return rec}
+function shouldListen(){return wantMic&&mode==='voice'&&!voiceSpeaking&&!recStoppingForPlayback&&((started&&phase==='waiting')||(started&&paused)||!started&&phase==='idle')&&document.visibilityState==='visible'}
+function scheduleRecognition(ms=200){clearTimeout(recRestart);if(!shouldListen()){updateMicUI();return}recRestart=setTimeout(()=>{recRestart=null;startRecognize()},ms)}
+function startRecognize(){if(!shouldListen()||recActive||recStarting)return;const r=getRecognize();if(!r){wantMic=false;setNotice('当前浏览器不支持 Web Speech 语音识别，请使用 Android Chrome，或手动操作。');updateMicUI();return}recStoppingForPlayback=false;try{recStarting=true;r.start();updateMicUI()}catch(e){recStarting=false;updateMicUI();if(e.name!=='InvalidStateError')setNotice('开启语音识别失败：'+e.message)}}
+function stopRecognize(){clearTimeout(recRestart);recRestart=null;recStoppingForPlayback=true;if(rec){try{if(recActive||recStarting)rec.abort()}catch{}}recActive=false;recStarting=false;updateMicUI()}
+function toggleMic(){wantMic=!wantMic;micBlocked=false;if(!wantMic){stopRecognize();updateMicUI();return}if(!supportsRecognize()){wantMic=false;setNotice('浏览器不支持语音识别。推荐通过 HTTPS 在 Android Chrome 中打开。');updateMicUI();return}setNotice('');recStoppingForPlayback=false;updateMicUI();if(shouldListen())startRecognize();else if(!started)note('🎤 麦克风已准备好。开始听写后，读完一题就可以说“下一个”。')}
+async function requestWakeLock(){if(!$('wakeCheck').checked||!started)return; if(!('wakeLock' in navigator)){ $('wakeStatus').textContent='⚠️ 当前环境不支持防息屏。请通过 HTTPS 打开，或在手机设置中延长息屏时间。';return}
+try{if(!wakeSentinel||wakeSentinel.released){wakeSentinel=await navigator.wakeLock.request('screen');$('wakeStatus').textContent='✅ 屏幕常亮已开启（页面保持在前台时有效）。';wakeSentinel.addEventListener('release',()=>{wakeSentinel=null;if(started)$('wakeStatus').textContent='⚠️ 屏幕常亮已被系统释放；返回网页后会尝试恢复。'})}}catch(e){$('wakeStatus').textContent='⚠️ 不能开启防息屏：'+(location.protocol==='file:'?'本地 HTML 通常不支持，请使用 HTTPS。':e.message)}}
+async function releaseWakeLock(){try{await wakeSentinel?.release()}catch{}wakeSentinel=null;$('wakeStatus').textContent='防息屏未启用；开始听写时会再次尝试。'}
+function changeMode(m){if(mode===m)return;mode=m;if(m==='auto'){wantMic=false;stopRecognize()}storage();render();updateMicUI();if(started&&!paused)runItem()}
+$('startBtn').addEventListener('click',startSession);$('pauseBtn').addEventListener('click',pauseSession);$('prevBtn').addEventListener('click',()=>goTo(index-1));$('nextBtn').addEventListener('click',()=>goTo(index+1));$('repeatBtn').addEventListener('click',sayAgain);$('replayBtn').addEventListener('click',()=>{if(started){if(paused)pauseSession();else runItem()}else sayAgain()});$('stopBtn').addEventListener('click',()=>stopSession());$('micBtn').addEventListener('click',toggleMic);
+$('voiceMode').addEventListener('click',()=>changeMode('voice'));$('autoMode').addEventListener('click',()=>changeMode('auto'));
+$('repeatRange').addEventListener('input',e=>{cycles=+e.target.value;$('repeatValue').textContent=cycles+' 次';storage();renderProgress()});$('gapRange').addEventListener('input',e=>{gap=+e.target.value;$('gapValue').textContent=gap+' 秒';storage();renderProgress()});$('rateSelect').addEventListener('change',e=>{rate=+e.target.value;storage()});
+$('wakeCheck').addEventListener('change',()=>{storage();if($('wakeCheck').checked)requestWakeLock();else releaseWakeLock()});$('hideAnswer').addEventListener('change',()=>{storage();showCurrent()});
+$('loadBtn').addEventListener('click',()=>{if(loadItems()){note('已载入新内容。点击“开始听写”。');window.scrollTo({top:0,behavior:'smooth'})}});
+$('dictationInput').addEventListener('input',saveText);
+$('resetBtn').addEventListener('click',()=>{if(!confirm('确定恢复今天的31道题吗？当前编辑框内容将被覆盖。'))return;$('dictationInput').value=TODAY;loadItems();note('已恢复11月23日的31题。')});
+$('saveTxtBtn').addEventListener('click',()=>{const b=new Blob(['\ufeff'+$('dictationInput').value],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download='语文听写内容.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$('loadFile').addEventListener('change',async e=>{let file=e.target.files?.[0];if(!file)return;$('dictationInput').value=await file.text();loadItems();note(`已从 ${file.name} 导入题目。`);e.target.value=''});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(started&&$('wakeCheck').checked)requestWakeLock();if(shouldListen())scheduleRecognition(500)}else stopRecognize()});
+window.addEventListener('pagehide',()=>{stopRecognize();releaseWakeLock()});
+let savedText=null;try{savedText=localStorage.getItem(key+'-text')}catch{}$('dictationInput').value=savedText||TODAY;cycles=Math.min(6,Math.max(1,cycles));gap=Math.min(20,Math.max(1,gap));$('repeatRange').value=cycles;$('gapRange').value=gap;$('repeatValue').textContent=cycles+' 次';$('gapValue').textContent=gap+' 秒';$('rateSelect').value=String(rate);$('wakeCheck').checked=settings.wake!==false;$('hideAnswer').checked=!!settings.hidden;
+loadItems(false);render();updateMicUI();
+if(!window.isSecureContext)$('wakeStatus').textContent='⚠️ 当前网页不是安全上下文：防息屏/麦克风可能不可用。建议部署到 HTTPS（例如 GitHub Pages）。';
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>

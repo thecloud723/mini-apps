@@ -1,0 +1,24 @@
+{
+  "name": "语文听写播报器",
+  "short_name": "听写播报",
+  "description": "可语音控制的语文听写工具",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f6f3",
+  "theme_color": "#123d49",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
